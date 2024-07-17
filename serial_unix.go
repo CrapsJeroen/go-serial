@@ -222,8 +222,12 @@ func nativeOpen(portName string, mode *Mode) (*unixPort, error) {
 		}
 		return nil, err
 	}
+	return nativeOpenPortFromFileHandle(h, mode)
+}
+
+func nativeOpenPortFromFileHandle(filehandle int, mode *Mode) (*unixPort, error) {
 	port := &unixPort{
-		handle:      h,
+		handle:      filehandle,
 		opened:      1,
 		readTimeout: NoTimeout,
 	}
@@ -275,7 +279,7 @@ func nativeOpen(portName string, mode *Mode) (*unixPort, error) {
 		return nil, &PortError{code: InvalidSerialPort, causedBy: fmt.Errorf("error configuring port: %w", err)}
 	}
 
-	unix.SetNonblock(h, false)
+	unix.SetNonblock(filehandle, false)
 
 	port.acquireExclusiveAccess()
 
