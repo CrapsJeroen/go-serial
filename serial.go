@@ -89,6 +89,17 @@ func Open(portName string, mode *Mode) (Port, error) {
 	return port, err
 }
 
+// Open opens the serial port using the specified modes
+func OpenFromFileHandle(handle int, mode *Mode) (Port, error) {
+	port, err := nativeOpenPortFromFileHandle(handle, mode)
+	if err != nil {
+		// Return a nil interface, for which var==nil is true (instead of
+		// a nil pointer to a struct that satisfies the interface).
+		return nil, err
+	}
+	return port, err
+}
+
 // GetPortsList retrieve the list of available serial ports
 func GetPortsList() ([]string, error) {
 	return nativeGetPortsList()
